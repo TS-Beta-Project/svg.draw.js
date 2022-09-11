@@ -1,0 +1,73 @@
+{
+  "name": "svg.draw.js",
+  "version": "3.0.0",
+  "description": "An extension for svg.js which allows to draw elements with mouse",
+  "main": "src/svg.draw.js",
+  "unpkg": "dist/svg.draw.min.js",
+  "typings": "./svg.draw.js.d.ts",
+  "jsdelivr": "dist/svg.draw.min.js",
+  "browser": "src/svg.draw.js",
+  "module": "src/svg.draw.js",
+  "keywords": [
+    "svg.js",
+    "draw",
+    "mouse"
+  ],
+  "bugs": "https://github.com/svgdotjs/svg.draw.js/issues",
+  "license": "MIT",
+  "author": {
+    "name": "Ulrich-Matthias Schäfer"
+  },
+  "contributors": {
+    "name": "Ulrich-Matthias Schäfer"
+  },
+  "homepage": "https://github.com/svgdotjs/svg.draw.js",
+  "files": [
+    "dist/",
+    "src/",
+    "svg.draw.js.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svgdotjs/svg.draw.js.git"
+  },
+  "scripts": {
+    "build": "npm run fix && npm run rollup",
+    "fix": "npx eslint ./src --fix",
+    "lint": "npx eslint ./src",
+    "rollup": "npx rollup -c .config/rollup.config.js",
+    "zip": "zip -j dist/svg.draggable.js.zip -- LICENSE README.md dist/svg.draggable.js dist/svg.draggable.js.map dist/svg.draggable.min.js dist/svg.draggable.min.js.map",
+    "prepublishOnly": "rm -rf ./dist && npm run build",
+    "postpublish": "npm run zip"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.0",
+    "@babel/plugin-external-helpers": "^7.18.6",
+    "@babel/plugin-transform-runtime": "^7.18.10",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.19.0",
+    "@babel/runtime": "^7.19.0",
+    "@babel/runtime-corejs2": "^7.19.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^8.23.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.1",
+    "eslint-plugin-standard": "^4.1.0",
+    "rollup": "^2.79.0",
+    "rollup-plugin-babel": "^4.3.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-filesize": "^9.1.2",
+    "rollup-plugin-multi-entry": "^2.1.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-uglify-es": "0.0.1"
+  },
+  "dependencies": {
+    "@svgdotjs/svg.js": "git+https://github.com/grupopulpo/svg.js.git"
+  }
+}
