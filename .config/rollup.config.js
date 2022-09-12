@@ -1,9 +1,10 @@
+import babel from 'rollup-plugin-babel'
 import * as pkg from '../package.json'
-import babel from '@rollup/plugin-babel'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
 import filesize from 'rollup-plugin-filesize'
-import { terser } from 'rollup-plugin-terser'
+// import { terser } from 'rollup-plugin-terser'
+import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import { terser, uglify } from 'rollup-plugin-terser'
 
 const buildDate = Date()
 
@@ -12,7 +13,7 @@ const headerLong = `/*!
 * @version ${pkg.version}
 * ${pkg.homepage}
 *
-* @copyright ${pkg.author}
+* @copyright ${pkg.author.name}
 * @license ${pkg.license}
 *
 * BUILT: ${buildDate}
@@ -20,95 +21,52 @@ const headerLong = `/*!
 
 const headerShort = `/*! ${pkg.name} v${pkg.version} ${pkg.license}*/;`
 
-const getBabelConfig = (node = false) => {
-  
-  let targets = pkg.browserslist
-  const plugins = [
-    ['@babel/plugin-transform-classes'],
-    ['@babel/plugin-transform-runtime', {
-      corejs: 3,
-      helpers: true,
-      useESModules: true,
-      version: "^7.9.6",
-      regenerator: false
-    }]
-  ]
-
-  if (node) {
-    plugins.shift()
-    targets = 'maintained node versions'
-  }
-
-  return babel({
-    include: 'src/**',
-    babelHelpers: 'runtime',
-    babelrc: false,
-    presets: [['@babel/preset-env', {
-      modules: false,
-      targets: targets || pkg.browserslist,
-      // useBuildins and plugin-transform-runtime are mutually exclusive
-      // https://github.com/babel/babel/issues/10271#issuecomment-528379505
-      // use babel-polyfills when released
-      useBuiltIns: false,
-      bugfixes: true
-    }]],
-    plugins
-  })
-}
+const getBabelConfig = (targets, corejs = false) => babel({
+  include: 'src/**',
+  runtimeHelpers: true,
+  babelrc: false,
+  presets: [['@babel/preset-env', {
+    modules: false,
+    targets: targets || pkg.browserslist,
+    //useBuiltIns: 'usage'
+  }]],
+  plugins: [['@babel/plugin-transform-runtime', {
+    corejs: corejs,
+    helpers: true,
+    useESModules: true
+  }]]
+})
 
 // When few of these get mangled nothing works anymore
 // We loose literally nothing by let these unmangled
 const classes = [
-  'A',
-  'ClipPath',
-  'Defs',
-  'Element',
-  'G',
-  'Image',
-  'Marker',
-  'Path',
-  'Polygon',
-  'Rect',
-  'Stop',
-  'Svg',
-  'Text',
-  'Tspan',
-  'Circle',
-  'Container',
-  'Dom',
-  'Ellipse',
-  'Gradient',
-  'Line',
-  'Mask',
-  'Pattern',
-  'Polyline',
-  'Shape',
-  'Style',
-  'Symbol',
-  'TextPath',
-  'Use'
+
 ]
 
-const config = (node, min, esm = false) => ({
-  input: (node || esm) ? './src/main.js' : './src/svg.js',
+const config = (node, min) => ({
+  external: ['@svgdotjs/svg.js'],
+  input: 'src/main.js',
   output: {
-    file: esm ? './dist/svg.esm.js'
-      : node ? './dist/svg.node.js'
-      : min ? './dist/svg.min.js'
-      : './dist/svg.js',
-    format: esm ? 'esm' : node ? 'cjs' : 'iife',
-    name: 'SVG',
+    file: node ? './dist/svg.draw.node.js'
+      : min ? './dist/svg.draw.min.js'
+        : './dist/svg.draw.js',
+    format: node ? 'cjs' : 'iife',
+    name: 'SVG.Draw',
+    //name: 'SVG.Filter',
     sourcemap: true,
     banner: headerLong,
     // remove Object.freeze
-    freeze: false
+    freeze: false,
+    globals: {
+      '@svgdotjs/svg.js': 'SVG',
+    },
   },
   treeshake: {
     // property getter have no sideeffects
     propertyReadSideEffects: false
   },
   plugins: [
-    resolve({ browser: !node }),
+    resolve(),
     commonjs(),
     getBabelConfig(node && 'maintained node versions'),
     filesize(),
@@ -120,11 +78,10 @@ const config = (node, min, esm = false) => ({
         preamble: headerShort
       }
     })
-  ],
-  //external: ['@babel/runtime', '@babel/runtime-corejs3']
+  ]
 })
 
-// [node, minified, esm]
-const modes = [[false], [false, true], [true], [false, false, true]]
+// [node, minified]
+const modes = [[false], [false, true]]
 
 export default modes.map(m => config(...m))
