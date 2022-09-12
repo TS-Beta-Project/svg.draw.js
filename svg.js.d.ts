@@ -9,6 +9,10 @@ declare type CSSStyleName = Exclude<keyof CSSStyleDeclaration, "parentRule" | "l
 
 declare module "@svgdotjs/svg.js" {
 
+    interface Element {
+        draw(): this;
+    }
+
     function SVG(): Svg;
     function SVG(selector: QuerySelector): Element;
     function SVG<T>(el: T): SVGTypeMapping<T>
