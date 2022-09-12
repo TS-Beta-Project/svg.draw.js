@@ -1,5 +1,10 @@
 .DS_Store
 .idea
-.vscode/
+.importjs.js
+test/
 node_modules/
-/dist
+.vscode/
+coverage/
+spec/es5TestBundle.js
+.env
+dist
