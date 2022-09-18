@@ -68,6 +68,6 @@
     "rollup-plugin-uglify-es": "0.0.1"
   },
   "dependencies": {
-    "@svgdotjs/svg.js": "git+https://github.com/grupopulpo/svg.js.git"
+    "@svgdotjs/svg.js": "git+https://github.com/TS-Beta-Project/svg.js.git"
   }
 }
